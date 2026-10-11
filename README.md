@@ -15,10 +15,12 @@ Inclui:
 ## Instalar
 
 ```bash
-npm install github:mova-pt/schema#v1.0.2
+npm install "@mova-pt/schema@https://github.com/mova-pt/schema/archive/087ef6d6069dd3336a1abbc71d95fc0bb545c296.tar.gz"
 ```
 
-O repositório é privado: a máquina que instala precisa de acesso ao GitHub da organização.
+O endereço fixa a versão 1.0.2 pelo commit, e o `package-lock.json` guarda a soma de verificação do ficheiro. Usar sempre esta forma `https`: a forma `github:mova-pt/schema` fica registada como `git+ssh` e falha em máquinas sem chaves SSH, como a Vercel.
+
+O repositório é público para poder ser instalado sem credenciais. Não pôr aqui segredos, dados de clientes nem código do painel.
 
 ## Num site de cliente
 
@@ -126,4 +128,4 @@ npm run check   # tipos, build e testes
 
 A pasta `dist/` e o `schema/mova.v1.json` estão no repositório para o pacote poder ser instalado diretamente do GitHub. Depois de alterar `src/`, correr `npm run build` antes do commit; um teste falha se o JSON Schema ficar desatualizado.
 
-Para publicar uma versão: atualizar `version` no `package.json`, fazer commit e criar a etiqueta (`git tag v1.0.1 && git push --tags`).
+Para publicar uma versão: atualizar `version` no `package.json`, fazer commit, criar a etiqueta (`git tag v1.0.3 && git push --tags`) e atualizar o commit no endereço de instalação acima e nos `CLAUDE.md` da pasta de trabalho.
