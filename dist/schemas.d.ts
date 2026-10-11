@@ -366,7 +366,7 @@ export declare const movaFileSchema: z.ZodObject<{
         contactos: "contactos";
         faq: "faq";
     }>>;
-    horarios: z.ZodArray<z.ZodObject<{
+    horarios: z.ZodDefault<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         nome: z.ZodString;
         tipo: z.ZodEnum<{
@@ -374,7 +374,7 @@ export declare const movaFileSchema: z.ZodObject<{
             availability: "availability";
             classes: "classes";
         }>;
-    }, z.core.$strict>>;
+    }, z.core.$strict>>>;
     conteudo: z.ZodObject<{
         horarios: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<readonly [z.ZodObject<{
             dias: z.ZodArray<z.ZodObject<{

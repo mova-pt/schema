@@ -15,7 +15,7 @@ Inclui:
 ## Instalar
 
 ```bash
-npm install github:mova-pt/schema#v1.0.1
+npm install github:mova-pt/schema#v1.0.2
 ```
 
 O repositório é privado: a máquina que instala precisa de acesso ao GitHub da organização.

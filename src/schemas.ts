@@ -224,8 +224,13 @@ export const movaFileSchema = z
     versao: z.literal(MOVA_VERSION),
     blocos: z
       .array(blockNameSchema)
+      .max(BLOCK_NAMES.length)
       .refine((blocks) => new Set(blocks).size === blocks.length, "blocos repetidos"),
-    horarios: z.array(scheduleMetaSchema).max(12).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE),
+    horarios: z
+      .array(scheduleMetaSchema)
+      .max(12)
+      .refine(hasUniqueIds, UNIQUE_IDS_MESSAGE)
+      .default([]),
     conteudo: contentSchema,
   })
   .superRefine((file, ctx) => {
