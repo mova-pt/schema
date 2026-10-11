@@ -1,0 +1,536 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "versao": {
+      "type": "number",
+      "const": 1
+    },
+    "blocos": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "horarios",
+          "precos",
+          "avisos",
+          "servicos",
+          "equipa",
+          "contactos",
+          "faq"
+        ]
+      }
+    },
+    "horarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "nome": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "opening",
+              "availability",
+              "classes"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "nome",
+          "tipo"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "conteudo": {
+      "type": "object",
+      "properties": {
+        "horarios": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "dias": {
+                    "maxItems": 7,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "dia": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7
+                        },
+                        "intervalos": {
+                          "maxItems": 12,
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "inicio": {
+                                "type": "string",
+                                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                              },
+                              "fim": {
+                                "type": "string",
+                                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                              }
+                            },
+                            "required": [
+                              "inicio",
+                              "fim"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "dia",
+                        "intervalos"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "excecoes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        "fechado": {
+                          "type": "boolean"
+                        },
+                        "inicio": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "fim": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "nota": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "fechado"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "dias",
+                  "excecoes"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "aulas": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "maxLength": 80,
+                          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                        },
+                        "dia": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7
+                        },
+                        "inicio": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "fim": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "modalidade": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 80
+                        },
+                        "instrutor": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 80
+                        },
+                        "sala": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 80
+                        },
+                        "nivel": {
+                          "type": "string",
+                          "enum": [
+                            "iniciação",
+                            "intermédio",
+                            "avançado",
+                            "todos"
+                          ]
+                        },
+                        "lotacao": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "visivel": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "dia",
+                        "inicio",
+                        "fim",
+                        "modalidade",
+                        "visivel"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "excecoes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                        },
+                        "fechado": {
+                          "type": "boolean"
+                        },
+                        "inicio": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "fim": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "nota": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "fechado"
+                      ],
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "required": [
+                  "aulas",
+                  "excecoes"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "precos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "nome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "preco": {
+                "type": "number",
+                "minimum": 0
+              },
+              "periodo": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "inclui": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                }
+              },
+              "destaque": {
+                "type": "boolean"
+              },
+              "visivel": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "nome",
+              "preco",
+              "visivel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "avisos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "texto": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "inicio": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "fim": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "visivel": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "texto",
+              "inicio",
+              "fim",
+              "visivel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "servicos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "nome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "descricao": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "duracao": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "preco": {
+                "type": "number",
+                "minimum": 0
+              },
+              "foto": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "visivel": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "nome",
+              "visivel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "equipa": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "nome": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "funcao": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120
+              },
+              "descricao": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "foto": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "visivel": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "nome",
+              "visivel"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "contactos": {
+          "type": "object",
+          "properties": {
+            "telefone": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            "whatsapp": {
+              "type": "string",
+              "pattern": "^\\d{8,15}$"
+            },
+            "email": {
+              "type": "string",
+              "maxLength": 254,
+              "format": "email",
+              "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+            },
+            "morada": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "redes": {
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "url": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "format": "uri"
+                  }
+                },
+                "required": [
+                  "tipo",
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "faq": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "pergunta": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "resposta": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              },
+              "visivel": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "pergunta",
+              "resposta",
+              "visivel"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "versao",
+    "blocos",
+    "horarios",
+    "conteudo"
+  ],
+  "additionalProperties": false,
+  "$id": "https://app.movadigital.pt/schema/mova.v1.json",
+  "title": "mova.json (versão 1)"
+}

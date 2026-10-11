@@ -1,0 +1,9 @@
+{
+  "versao": 1,
+  "blocos": ["avisos", "contactos"],
+  "horarios": [],
+  "conteudo": {
+    "avisos": [],
+    "contactos": { "morada": "Rua Exemplo 1, 3720-000 Oliveira de Azeméis" }
+  }
+}
