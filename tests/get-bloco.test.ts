@@ -45,15 +45,16 @@ describe("getBloco sem MOVA_TENANT_ID", () => {
 });
 
 describe("getBloco com MOVA_TENANT_ID", () => {
+  const TENANT = "3f2b8c1e-5d4a-4b6f-9a7c-0e1d2f3a4b5c";
   const remotePrices = [{ id: "anual", nome: "Anual", preco: 400, visivel: true }];
 
   it("lê da API do painel com revalidate de 300 s", async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse(remotePrices));
-    const getBloco = createGetBloco(site, { tenantId: "tenant_123", fetch: fetchMock });
+    const getBloco = createGetBloco(site, { tenantId: TENANT, fetch: fetchMock });
 
     expect(await getBloco("precos")).toEqual(remotePrices);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit & { next?: unknown }];
-    expect(url).toBe("https://app.movadigital.pt/api/public/tenant_123/precos");
+    expect(url).toBe(`https://app.movadigital.pt/api/public/${TENANT}/precos`);
     expect(init.next).toEqual({ revalidate: MOVA_REVALIDATE_SECONDS });
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });
@@ -72,7 +73,7 @@ describe("getBloco com MOVA_TENANT_ID", () => {
     ["corpo que não é JSON", () => Promise.resolve(new Response("<html>", { status: 200 }))],
     ["falha de rede ou timeout", () => Promise.reject(new Error("timeout"))],
   ])("usa o conteúdo do site com %s", async (_name, respond) => {
-    const getBloco = createGetBloco(site, { tenantId: "tenant_123", fetch: vi.fn(respond) });
+    const getBloco = createGetBloco(site, { tenantId: TENANT, fetch: vi.fn(respond) });
     expect(await getBloco("precos")).toEqual(site.conteudo.precos);
   });
 
@@ -85,9 +86,9 @@ describe("getBloco com MOVA_TENANT_ID", () => {
 });
 
 describe("buildMovaJson", () => {
-  it("gera um ficheiro válido com $schema e versão", () => {
+  it("gera um ficheiro válido com a versão", () => {
     const file = JSON.parse(buildMovaJson(input)) as Record<string, unknown>;
-    expect(file.$schema).toBe("https://app.movadigital.pt/schema/mova.v1.json");
+    expect(Object.keys(file)).toEqual(["versao", "blocos", "horarios", "conteudo"]);
     expect(file.versao).toBe(1);
     expect(movaFileSchema.safeParse(file).success).toBe(true);
   });

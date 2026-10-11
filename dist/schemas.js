@@ -5,7 +5,6 @@ export const BLOCK_NAMES = [
     "precos",
     "avisos",
     "servicos",
-    "equipa",
     "contactos",
     "faq",
 ];
@@ -16,7 +15,7 @@ export const scheduleTypeSchema = z.enum(SCHEDULE_TYPES);
 // Identificador fixo: slug em minúsculas, sem acentos.
 export const idSchema = z
     .string()
-    .max(80)
+    .max(64)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "id tem de ser um slug em minúsculas, sem acentos");
 // Hora local de Lisboa, "HH:MM".
 export const timeSchema = z
@@ -35,19 +34,14 @@ export const daySchema = z.number().int().min(1).max(7);
 const text = (max) => z.string().trim().min(1).max(max);
 const hasUniqueIds = (items) => new Set(items.map((item) => item.id)).size === items.length;
 const UNIQUE_IDS_MESSAGE = "ids repetidos na lista";
-// Caminho local ("/images/x.webp") ou endereço https.
+// Caminho de uma imagem do próprio site (ex.: "/images/pilates.webp").
 const imageSchema = z
     .string()
-    .max(500)
-    .refine((value) => value.startsWith("/") || value.startsWith("https://"), {
-    message: 'foto tem de começar por "/" ou "https://"',
-});
-const webUrlSchema = z
-    .url()
-    .max(500)
-    .refine((value) => /^https?:\/\//i.test(value), { message: "url tem de ser http ou https" });
+    .max(200)
+    .regex(/^\/[A-Za-z0-9/_.-]+\.(webp|avif|jpg|jpeg|png)$/, "foto tem de ser o caminho de uma imagem do próprio site");
+const webUrlSchema = z.url({ protocol: /^https$/ }).max(300);
 export const intervalSchema = z
-    .object({ inicio: timeSchema, fim: timeSchema })
+    .strictObject({ inicio: timeSchema, fim: timeSchema })
     .refine((value) => value.inicio < value.fim, {
     message: "fim tem de ser depois do início",
     path: ["fim"],
@@ -59,15 +53,15 @@ const hasNoOverlaps = (intervals) => {
         return previous === undefined || previous.fim <= interval.inicio;
     });
 };
-export const scheduleDaySchema = z.object({
+export const scheduleDaySchema = z.strictObject({
     dia: daySchema,
     intervalos: z
         .array(intervalSchema)
-        .max(12)
+        .max(6)
         .refine(hasNoOverlaps, "os intervalos do mesmo dia não se podem sobrepor"),
 });
 export const scheduleExceptionSchema = z
-    .object({
+    .strictObject({
     data: dateSchema,
     fechado: z.boolean(),
     inicio: timeSchema.optional(),
@@ -75,16 +69,17 @@ export const scheduleExceptionSchema = z
     nota: text(200).optional(),
 })
     .refine((value) => value.inicio === undefined || value.fim === undefined || value.inicio < value.fim, { message: "fim tem de ser depois do início", path: ["fim"] });
+const exceptionsSchema = z.array(scheduleExceptionSchema).max(200);
 // Conteúdo de um horário "opening" ou "availability".
-export const openingContentSchema = z.object({
+export const openingContentSchema = z.strictObject({
     dias: z
         .array(scheduleDaySchema)
         .max(7)
         .refine((days) => new Set(days.map((day) => day.dia)).size === days.length, "cada dia só pode aparecer uma vez"),
-    excecoes: z.array(scheduleExceptionSchema),
+    excecoes: exceptionsSchema,
 });
 export const classSchema = z
-    .object({
+    .strictObject({
     id: idSchema,
     dia: daySchema,
     inicio: timeSchema,
@@ -93,7 +88,7 @@ export const classSchema = z
     instrutor: text(80).optional(),
     sala: text(80).optional(),
     nivel: z.enum(CLASS_LEVELS).optional(),
-    lotacao: z.number().int().positive().optional(),
+    lotacao: z.number().int().min(1).max(1000).optional(),
     visivel: z.boolean(),
 })
     .refine((value) => value.inicio < value.fim, {
@@ -101,29 +96,29 @@ export const classSchema = z
     path: ["fim"],
 });
 // Conteúdo de um horário "classes".
-export const classesContentSchema = z.object({
-    aulas: z.array(classSchema).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE),
-    excecoes: z.array(scheduleExceptionSchema),
+export const classesContentSchema = z.strictObject({
+    aulas: z.array(classSchema).max(300).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE),
+    excecoes: exceptionsSchema,
 });
 export const scheduleContentSchema = z.union([openingContentSchema, classesContentSchema]);
-export const scheduleMetaSchema = z.object({
+export const scheduleMetaSchema = z.strictObject({
     id: idSchema,
     nome: text(80),
     tipo: scheduleTypeSchema,
 });
-export const priceSchema = z.object({
+export const priceSchema = z.strictObject({
     id: idSchema,
     nome: text(120),
-    preco: z.number().nonnegative(),
+    preco: z.number().min(0).max(100000),
     periodo: text(40).optional(),
     inclui: z.array(text(160)).max(20).optional(),
     destaque: z.boolean().optional(),
     visivel: z.boolean(),
 });
 export const noticeSchema = z
-    .object({
+    .strictObject({
     id: idSchema,
-    texto: text(500),
+    texto: text(400),
     inicio: dateSchema,
     fim: dateSchema,
     visivel: z.boolean(),
@@ -132,71 +127,61 @@ export const noticeSchema = z
     message: "fim não pode ser antes do início",
     path: ["fim"],
 });
-export const serviceSchema = z.object({
+export const serviceSchema = z.strictObject({
     id: idSchema,
     nome: text(120),
-    descricao: text(1000).optional(),
-    duracao: z.number().int().positive().optional(),
-    preco: z.number().nonnegative().optional(),
+    descricao: text(600).optional(),
+    duracao: z.number().int().min(1).max(1440).optional(),
+    preco: z.number().min(0).max(100000).optional(),
     foto: imageSchema.optional(),
     visivel: z.boolean(),
 });
-export const teamMemberSchema = z.object({
-    id: idSchema,
-    nome: text(120),
-    funcao: text(120).optional(),
-    descricao: text(1000).optional(),
-    foto: imageSchema.optional(),
-    visivel: z.boolean(),
-});
-export const contactsSchema = z.object({
+export const contactsSchema = z.strictObject({
     telefone: text(30).optional(),
     whatsapp: z
         .string()
         .regex(/^\d{8,15}$/, "whatsapp só com dígitos, com indicativo do país")
         .optional(),
-    email: z.email().max(254).optional(),
+    email: z.email().max(200).optional(),
     morada: text(300).optional(),
     redes: z
-        .array(z.object({ tipo: text(40), url: webUrlSchema }))
+        .array(z.strictObject({ tipo: text(40), url: webUrlSchema }))
         .max(12)
         .optional(),
 });
-export const faqItemSchema = z.object({
+export const faqItemSchema = z.strictObject({
     id: idSchema,
-    pergunta: text(300),
-    resposta: text(2000),
+    pergunta: text(200),
+    resposta: text(1200),
     visivel: z.boolean(),
 });
-const listOf = (item) => z.array(item).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE);
+const listOf = (item, max) => z.array(item).max(max).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE);
+// Todos os objetos são estritos: um campo a mais é um erro, tal como no painel.
 // Esquema de cada bloco: é o que a API pública devolve em /api/public/{tenant}/{bloco}.
 export const blockSchemas = {
     horarios: z.record(idSchema, scheduleContentSchema),
-    precos: listOf(priceSchema),
-    avisos: listOf(noticeSchema),
-    servicos: listOf(serviceSchema),
-    equipa: listOf(teamMemberSchema),
+    precos: listOf(priceSchema, 60),
+    avisos: listOf(noticeSchema, 40),
+    servicos: listOf(serviceSchema, 80),
     contactos: contactsSchema,
-    faq: listOf(faqItemSchema),
+    faq: listOf(faqItemSchema, 60),
 };
-export const contentSchema = z.object({
+export const contentSchema = z.strictObject({
     horarios: blockSchemas.horarios.optional(),
     precos: blockSchemas.precos.optional(),
     avisos: blockSchemas.avisos.optional(),
     servicos: blockSchemas.servicos.optional(),
-    equipa: blockSchemas.equipa.optional(),
     contactos: blockSchemas.contactos.optional(),
     faq: blockSchemas.faq.optional(),
 });
 // Ficheiro mova.json completo, versão 1.
 export const movaFileSchema = z
-    .object({
-    $schema: z.string().optional(),
+    .strictObject({
     versao: z.literal(MOVA_VERSION),
     blocos: z
         .array(blockNameSchema)
         .refine((blocks) => new Set(blocks).size === blocks.length, "blocos repetidos"),
-    horarios: z.array(scheduleMetaSchema).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE),
+    horarios: z.array(scheduleMetaSchema).max(12).refine(hasUniqueIds, UNIQUE_IDS_MESSAGE),
     conteudo: contentSchema,
 })
     .superRefine((file, ctx) => {

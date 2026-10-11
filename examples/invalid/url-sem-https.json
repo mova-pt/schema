@@ -1,0 +1,134 @@
+{
+  "versao": 1,
+  "blocos": [
+    "horarios",
+    "precos",
+    "avisos",
+    "servicos",
+    "contactos",
+    "faq"
+  ],
+  "horarios": [
+    {
+      "id": "rececao",
+      "nome": "Receção",
+      "tipo": "opening"
+    },
+    {
+      "id": "aulas",
+      "nome": "Aulas de grupo",
+      "tipo": "classes"
+    }
+  ],
+  "conteudo": {
+    "horarios": {
+      "rececao": {
+        "dias": [
+          {
+            "dia": 1,
+            "intervalos": [
+              {
+                "inicio": "07:00",
+                "fim": "13:00"
+              },
+              {
+                "inicio": "15:00",
+                "fim": "21:00"
+              }
+            ]
+          },
+          {
+            "dia": 7,
+            "intervalos": []
+          }
+        ],
+        "excecoes": [
+          {
+            "data": "2026-12-08",
+            "fechado": true,
+            "nota": "Feriado"
+          }
+        ]
+      },
+      "aulas": {
+        "aulas": [
+          {
+            "id": "pilates-seg-1830",
+            "dia": 1,
+            "inicio": "18:30",
+            "fim": "19:20",
+            "modalidade": "Pilates",
+            "instrutor": "Ana",
+            "sala": "Sala 1",
+            "nivel": "todos",
+            "lotacao": 12,
+            "visivel": true
+          },
+          {
+            "id": "yoga-qua-0800",
+            "dia": 3,
+            "inicio": "08:00",
+            "fim": "09:00",
+            "modalidade": "Yoga",
+            "visivel": false
+          }
+        ],
+        "excecoes": []
+      }
+    },
+    "precos": [
+      {
+        "id": "mensal-2x",
+        "nome": "Mensal 2x por semana",
+        "preco": 45,
+        "periodo": "mês",
+        "inclui": [
+          "Aulas de grupo",
+          "Avaliação inicial"
+        ],
+        "destaque": false,
+        "visivel": true
+      }
+    ],
+    "avisos": [
+      {
+        "id": "natal",
+        "texto": "Fechado a 25 de dezembro.",
+        "inicio": "2026-12-20",
+        "fim": "2026-12-26",
+        "visivel": true
+      }
+    ],
+    "servicos": [
+      {
+        "id": "pilates",
+        "nome": "Pilates",
+        "descricao": "Aulas em grupo pequeno.",
+        "duracao": 50,
+        "preco": 12,
+        "foto": "/images/pilates.webp",
+        "visivel": true
+      }
+    ],
+    "contactos": {
+      "telefone": "+351 912 345 678",
+      "whatsapp": "351912345678",
+      "email": "geral@exemplo.pt",
+      "morada": "Rua Exemplo 10, 3700-000 São João da Madeira",
+      "redes": [
+        {
+          "tipo": "instagram",
+          "url": "http://instagram.com/exemplo"
+        }
+      ]
+    },
+    "faq": [
+      {
+        "id": "primeira-aula",
+        "pergunta": "Posso experimentar?",
+        "resposta": "Sim, a primeira aula é gratuita.",
+        "visivel": true
+      }
+    ]
+  }
+}

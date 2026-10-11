@@ -1,5 +1,4 @@
 import { MOVA_VERSION, isClassesContent, movaFileSchema, } from "./schemas.js";
-export const MOVA_SCHEMA_URL = "https://app.movadigital.pt/schema/mova.v1.json";
 // Valida o conteúdo de content/site.ts. Lança um erro se o formato estiver errado.
 export function defineSite(input) {
     return movaFileSchema.parse({ ...input, versao: MOVA_VERSION });
@@ -7,8 +6,7 @@ export function defineSite(input) {
 // Texto do ficheiro public/mova.json, já validado.
 export function buildMovaJson(site) {
     const file = movaFileSchema.parse({ ...site, versao: MOVA_VERSION });
-    const { $schema: _ignored, ...rest } = file;
-    return `${JSON.stringify({ $schema: MOVA_SCHEMA_URL, ...rest }, null, 2)}\n`;
+    return `${JSON.stringify(file, null, 2)}\n`;
 }
 // Retira os itens com "visivel": false, como faz a API pública.
 export function filterVisible(block, content) {

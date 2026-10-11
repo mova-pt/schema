@@ -1,6 +1,6 @@
 import { z } from "zod";
 export declare const MOVA_VERSION = 1;
-export declare const BLOCK_NAMES: readonly ["horarios", "precos", "avisos", "servicos", "equipa", "contactos", "faq"];
+export declare const BLOCK_NAMES: readonly ["horarios", "precos", "avisos", "servicos", "contactos", "faq"];
 export declare const SCHEDULE_TYPES: readonly ["opening", "availability", "classes"];
 export declare const CLASS_LEVELS: readonly ["iniciação", "intermédio", "avançado", "todos"];
 export declare const blockNameSchema: z.ZodEnum<{
@@ -8,7 +8,6 @@ export declare const blockNameSchema: z.ZodEnum<{
     precos: "precos";
     avisos: "avisos";
     servicos: "servicos";
-    equipa: "equipa";
     contactos: "contactos";
     faq: "faq";
 }>;
@@ -24,37 +23,37 @@ export declare const daySchema: z.ZodNumber;
 export declare const intervalSchema: z.ZodObject<{
     inicio: z.ZodString;
     fim: z.ZodString;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const scheduleDaySchema: z.ZodObject<{
     dia: z.ZodNumber;
     intervalos: z.ZodArray<z.ZodObject<{
         inicio: z.ZodString;
         fim: z.ZodString;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
+    }, z.core.$strict>>;
+}, z.core.$strict>;
 export declare const scheduleExceptionSchema: z.ZodObject<{
     data: z.ZodString;
     fechado: z.ZodBoolean;
     inicio: z.ZodOptional<z.ZodString>;
     fim: z.ZodOptional<z.ZodString>;
     nota: z.ZodOptional<z.ZodString>;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const openingContentSchema: z.ZodObject<{
     dias: z.ZodArray<z.ZodObject<{
         dia: z.ZodNumber;
         intervalos: z.ZodArray<z.ZodObject<{
             inicio: z.ZodString;
             fim: z.ZodString;
-        }, z.core.$strip>>;
-    }, z.core.$strip>>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>>;
     excecoes: z.ZodArray<z.ZodObject<{
         data: z.ZodString;
         fechado: z.ZodBoolean;
         inicio: z.ZodOptional<z.ZodString>;
         fim: z.ZodOptional<z.ZodString>;
         nota: z.ZodOptional<z.ZodString>;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
+    }, z.core.$strict>>;
+}, z.core.$strict>;
 export declare const classSchema: z.ZodObject<{
     id: z.ZodString;
     dia: z.ZodNumber;
@@ -71,7 +70,7 @@ export declare const classSchema: z.ZodObject<{
     }>>;
     lotacao: z.ZodOptional<z.ZodNumber>;
     visivel: z.ZodBoolean;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const classesContentSchema: z.ZodObject<{
     aulas: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
@@ -89,31 +88,31 @@ export declare const classesContentSchema: z.ZodObject<{
         }>>;
         lotacao: z.ZodOptional<z.ZodNumber>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     excecoes: z.ZodArray<z.ZodObject<{
         data: z.ZodString;
         fechado: z.ZodBoolean;
         inicio: z.ZodOptional<z.ZodString>;
         fim: z.ZodOptional<z.ZodString>;
         nota: z.ZodOptional<z.ZodString>;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
+    }, z.core.$strict>>;
+}, z.core.$strict>;
 export declare const scheduleContentSchema: z.ZodUnion<readonly [z.ZodObject<{
     dias: z.ZodArray<z.ZodObject<{
         dia: z.ZodNumber;
         intervalos: z.ZodArray<z.ZodObject<{
             inicio: z.ZodString;
             fim: z.ZodString;
-        }, z.core.$strip>>;
-    }, z.core.$strip>>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>>;
     excecoes: z.ZodArray<z.ZodObject<{
         data: z.ZodString;
         fechado: z.ZodBoolean;
         inicio: z.ZodOptional<z.ZodString>;
         fim: z.ZodOptional<z.ZodString>;
         nota: z.ZodOptional<z.ZodString>;
-    }, z.core.$strip>>;
-}, z.core.$strip>, z.ZodObject<{
+    }, z.core.$strict>>;
+}, z.core.$strict>, z.ZodObject<{
     aulas: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         dia: z.ZodNumber;
@@ -130,15 +129,15 @@ export declare const scheduleContentSchema: z.ZodUnion<readonly [z.ZodObject<{
         }>>;
         lotacao: z.ZodOptional<z.ZodNumber>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     excecoes: z.ZodArray<z.ZodObject<{
         data: z.ZodString;
         fechado: z.ZodBoolean;
         inicio: z.ZodOptional<z.ZodString>;
         fim: z.ZodOptional<z.ZodString>;
         nota: z.ZodOptional<z.ZodString>;
-    }, z.core.$strip>>;
-}, z.core.$strip>]>;
+    }, z.core.$strict>>;
+}, z.core.$strict>]>;
 export declare const scheduleMetaSchema: z.ZodObject<{
     id: z.ZodString;
     nome: z.ZodString;
@@ -147,7 +146,7 @@ export declare const scheduleMetaSchema: z.ZodObject<{
         availability: "availability";
         classes: "classes";
     }>;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const priceSchema: z.ZodObject<{
     id: z.ZodString;
     nome: z.ZodString;
@@ -156,14 +155,14 @@ export declare const priceSchema: z.ZodObject<{
     inclui: z.ZodOptional<z.ZodArray<z.ZodString>>;
     destaque: z.ZodOptional<z.ZodBoolean>;
     visivel: z.ZodBoolean;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const noticeSchema: z.ZodObject<{
     id: z.ZodString;
     texto: z.ZodString;
     inicio: z.ZodString;
     fim: z.ZodString;
     visivel: z.ZodBoolean;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const serviceSchema: z.ZodObject<{
     id: z.ZodString;
     nome: z.ZodString;
@@ -172,15 +171,7 @@ export declare const serviceSchema: z.ZodObject<{
     preco: z.ZodOptional<z.ZodNumber>;
     foto: z.ZodOptional<z.ZodString>;
     visivel: z.ZodBoolean;
-}, z.core.$strip>;
-export declare const teamMemberSchema: z.ZodObject<{
-    id: z.ZodString;
-    nome: z.ZodString;
-    funcao: z.ZodOptional<z.ZodString>;
-    descricao: z.ZodOptional<z.ZodString>;
-    foto: z.ZodOptional<z.ZodString>;
-    visivel: z.ZodBoolean;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const contactsSchema: z.ZodObject<{
     telefone: z.ZodOptional<z.ZodString>;
     whatsapp: z.ZodOptional<z.ZodString>;
@@ -189,14 +180,14 @@ export declare const contactsSchema: z.ZodObject<{
     redes: z.ZodOptional<z.ZodArray<z.ZodObject<{
         tipo: z.ZodString;
         url: z.ZodURL;
-    }, z.core.$strip>>>;
-}, z.core.$strip>;
+    }, z.core.$strict>>>;
+}, z.core.$strict>;
 export declare const faqItemSchema: z.ZodObject<{
     id: z.ZodString;
     pergunta: z.ZodString;
     resposta: z.ZodString;
     visivel: z.ZodBoolean;
-}, z.core.$strip>;
+}, z.core.$strict>;
 export declare const blockSchemas: {
     readonly horarios: z.ZodRecord<z.ZodString, z.ZodUnion<readonly [z.ZodObject<{
         dias: z.ZodArray<z.ZodObject<{
@@ -204,16 +195,16 @@ export declare const blockSchemas: {
             intervalos: z.ZodArray<z.ZodObject<{
                 inicio: z.ZodString;
                 fim: z.ZodString;
-            }, z.core.$strip>>;
-        }, z.core.$strip>>;
+            }, z.core.$strict>>;
+        }, z.core.$strict>>;
         excecoes: z.ZodArray<z.ZodObject<{
             data: z.ZodString;
             fechado: z.ZodBoolean;
             inicio: z.ZodOptional<z.ZodString>;
             fim: z.ZodOptional<z.ZodString>;
             nota: z.ZodOptional<z.ZodString>;
-        }, z.core.$strip>>;
-    }, z.core.$strip>, z.ZodObject<{
+        }, z.core.$strict>>;
+    }, z.core.$strict>, z.ZodObject<{
         aulas: z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             dia: z.ZodNumber;
@@ -230,15 +221,15 @@ export declare const blockSchemas: {
             }>>;
             lotacao: z.ZodOptional<z.ZodNumber>;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>;
+        }, z.core.$strict>>;
         excecoes: z.ZodArray<z.ZodObject<{
             data: z.ZodString;
             fechado: z.ZodBoolean;
             inicio: z.ZodOptional<z.ZodString>;
             fim: z.ZodOptional<z.ZodString>;
             nota: z.ZodOptional<z.ZodString>;
-        }, z.core.$strip>>;
-    }, z.core.$strip>]>>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>]>>;
     readonly precos: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         nome: z.ZodString;
@@ -247,14 +238,14 @@ export declare const blockSchemas: {
         inclui: z.ZodOptional<z.ZodArray<z.ZodString>>;
         destaque: z.ZodOptional<z.ZodBoolean>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     readonly avisos: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         texto: z.ZodString;
         inicio: z.ZodString;
         fim: z.ZodString;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     readonly servicos: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         nome: z.ZodString;
@@ -263,15 +254,7 @@ export declare const blockSchemas: {
         preco: z.ZodOptional<z.ZodNumber>;
         foto: z.ZodOptional<z.ZodString>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
-    readonly equipa: z.ZodArray<z.ZodObject<{
-        id: z.ZodString;
-        nome: z.ZodString;
-        funcao: z.ZodOptional<z.ZodString>;
-        descricao: z.ZodOptional<z.ZodString>;
-        foto: z.ZodOptional<z.ZodString>;
-        visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     readonly contactos: z.ZodObject<{
         telefone: z.ZodOptional<z.ZodString>;
         whatsapp: z.ZodOptional<z.ZodString>;
@@ -280,14 +263,14 @@ export declare const blockSchemas: {
         redes: z.ZodOptional<z.ZodArray<z.ZodObject<{
             tipo: z.ZodString;
             url: z.ZodURL;
-        }, z.core.$strip>>>;
-    }, z.core.$strip>;
+        }, z.core.$strict>>>;
+    }, z.core.$strict>;
     readonly faq: z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         pergunta: z.ZodString;
         resposta: z.ZodString;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
 };
 export declare const contentSchema: z.ZodObject<{
     horarios: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<readonly [z.ZodObject<{
@@ -296,16 +279,16 @@ export declare const contentSchema: z.ZodObject<{
             intervalos: z.ZodArray<z.ZodObject<{
                 inicio: z.ZodString;
                 fim: z.ZodString;
-            }, z.core.$strip>>;
-        }, z.core.$strip>>;
+            }, z.core.$strict>>;
+        }, z.core.$strict>>;
         excecoes: z.ZodArray<z.ZodObject<{
             data: z.ZodString;
             fechado: z.ZodBoolean;
             inicio: z.ZodOptional<z.ZodString>;
             fim: z.ZodOptional<z.ZodString>;
             nota: z.ZodOptional<z.ZodString>;
-        }, z.core.$strip>>;
-    }, z.core.$strip>, z.ZodObject<{
+        }, z.core.$strict>>;
+    }, z.core.$strict>, z.ZodObject<{
         aulas: z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             dia: z.ZodNumber;
@@ -322,15 +305,15 @@ export declare const contentSchema: z.ZodObject<{
             }>>;
             lotacao: z.ZodOptional<z.ZodNumber>;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>;
+        }, z.core.$strict>>;
         excecoes: z.ZodArray<z.ZodObject<{
             data: z.ZodString;
             fechado: z.ZodBoolean;
             inicio: z.ZodOptional<z.ZodString>;
             fim: z.ZodOptional<z.ZodString>;
             nota: z.ZodOptional<z.ZodString>;
-        }, z.core.$strip>>;
-    }, z.core.$strip>]>>>;
+        }, z.core.$strict>>;
+    }, z.core.$strict>]>>>;
     precos: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         nome: z.ZodString;
@@ -339,14 +322,14 @@ export declare const contentSchema: z.ZodObject<{
         inclui: z.ZodOptional<z.ZodArray<z.ZodString>>;
         destaque: z.ZodOptional<z.ZodBoolean>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>>;
+    }, z.core.$strict>>>;
     avisos: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         texto: z.ZodString;
         inicio: z.ZodString;
         fim: z.ZodString;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>>;
+    }, z.core.$strict>>>;
     servicos: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         nome: z.ZodString;
@@ -355,15 +338,7 @@ export declare const contentSchema: z.ZodObject<{
         preco: z.ZodOptional<z.ZodNumber>;
         foto: z.ZodOptional<z.ZodString>;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>>;
-    equipa: z.ZodOptional<z.ZodArray<z.ZodObject<{
-        id: z.ZodString;
-        nome: z.ZodString;
-        funcao: z.ZodOptional<z.ZodString>;
-        descricao: z.ZodOptional<z.ZodString>;
-        foto: z.ZodOptional<z.ZodString>;
-        visivel: z.ZodBoolean;
-    }, z.core.$strip>>>;
+    }, z.core.$strict>>>;
     contactos: z.ZodOptional<z.ZodObject<{
         telefone: z.ZodOptional<z.ZodString>;
         whatsapp: z.ZodOptional<z.ZodString>;
@@ -372,24 +347,22 @@ export declare const contentSchema: z.ZodObject<{
         redes: z.ZodOptional<z.ZodArray<z.ZodObject<{
             tipo: z.ZodString;
             url: z.ZodURL;
-        }, z.core.$strip>>>;
-    }, z.core.$strip>>;
+        }, z.core.$strict>>>;
+    }, z.core.$strict>>;
     faq: z.ZodOptional<z.ZodArray<z.ZodObject<{
         id: z.ZodString;
         pergunta: z.ZodString;
         resposta: z.ZodString;
         visivel: z.ZodBoolean;
-    }, z.core.$strip>>>;
-}, z.core.$strip>;
+    }, z.core.$strict>>>;
+}, z.core.$strict>;
 export declare const movaFileSchema: z.ZodObject<{
-    $schema: z.ZodOptional<z.ZodString>;
     versao: z.ZodLiteral<1>;
     blocos: z.ZodArray<z.ZodEnum<{
         horarios: "horarios";
         precos: "precos";
         avisos: "avisos";
         servicos: "servicos";
-        equipa: "equipa";
         contactos: "contactos";
         faq: "faq";
     }>>;
@@ -401,7 +374,7 @@ export declare const movaFileSchema: z.ZodObject<{
             availability: "availability";
             classes: "classes";
         }>;
-    }, z.core.$strip>>;
+    }, z.core.$strict>>;
     conteudo: z.ZodObject<{
         horarios: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<readonly [z.ZodObject<{
             dias: z.ZodArray<z.ZodObject<{
@@ -409,16 +382,16 @@ export declare const movaFileSchema: z.ZodObject<{
                 intervalos: z.ZodArray<z.ZodObject<{
                     inicio: z.ZodString;
                     fim: z.ZodString;
-                }, z.core.$strip>>;
-            }, z.core.$strip>>;
+                }, z.core.$strict>>;
+            }, z.core.$strict>>;
             excecoes: z.ZodArray<z.ZodObject<{
                 data: z.ZodString;
                 fechado: z.ZodBoolean;
                 inicio: z.ZodOptional<z.ZodString>;
                 fim: z.ZodOptional<z.ZodString>;
                 nota: z.ZodOptional<z.ZodString>;
-            }, z.core.$strip>>;
-        }, z.core.$strip>, z.ZodObject<{
+            }, z.core.$strict>>;
+        }, z.core.$strict>, z.ZodObject<{
             aulas: z.ZodArray<z.ZodObject<{
                 id: z.ZodString;
                 dia: z.ZodNumber;
@@ -435,15 +408,15 @@ export declare const movaFileSchema: z.ZodObject<{
                 }>>;
                 lotacao: z.ZodOptional<z.ZodNumber>;
                 visivel: z.ZodBoolean;
-            }, z.core.$strip>>;
+            }, z.core.$strict>>;
             excecoes: z.ZodArray<z.ZodObject<{
                 data: z.ZodString;
                 fechado: z.ZodBoolean;
                 inicio: z.ZodOptional<z.ZodString>;
                 fim: z.ZodOptional<z.ZodString>;
                 nota: z.ZodOptional<z.ZodString>;
-            }, z.core.$strip>>;
-        }, z.core.$strip>]>>>;
+            }, z.core.$strict>>;
+        }, z.core.$strict>]>>>;
         precos: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             nome: z.ZodString;
@@ -452,14 +425,14 @@ export declare const movaFileSchema: z.ZodObject<{
             inclui: z.ZodOptional<z.ZodArray<z.ZodString>>;
             destaque: z.ZodOptional<z.ZodBoolean>;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>>;
+        }, z.core.$strict>>>;
         avisos: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             texto: z.ZodString;
             inicio: z.ZodString;
             fim: z.ZodString;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>>;
+        }, z.core.$strict>>>;
         servicos: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             nome: z.ZodString;
@@ -468,15 +441,7 @@ export declare const movaFileSchema: z.ZodObject<{
             preco: z.ZodOptional<z.ZodNumber>;
             foto: z.ZodOptional<z.ZodString>;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>>;
-        equipa: z.ZodOptional<z.ZodArray<z.ZodObject<{
-            id: z.ZodString;
-            nome: z.ZodString;
-            funcao: z.ZodOptional<z.ZodString>;
-            descricao: z.ZodOptional<z.ZodString>;
-            foto: z.ZodOptional<z.ZodString>;
-            visivel: z.ZodBoolean;
-        }, z.core.$strip>>>;
+        }, z.core.$strict>>>;
         contactos: z.ZodOptional<z.ZodObject<{
             telefone: z.ZodOptional<z.ZodString>;
             whatsapp: z.ZodOptional<z.ZodString>;
@@ -485,16 +450,16 @@ export declare const movaFileSchema: z.ZodObject<{
             redes: z.ZodOptional<z.ZodArray<z.ZodObject<{
                 tipo: z.ZodString;
                 url: z.ZodURL;
-            }, z.core.$strip>>>;
-        }, z.core.$strip>>;
+            }, z.core.$strict>>>;
+        }, z.core.$strict>>;
         faq: z.ZodOptional<z.ZodArray<z.ZodObject<{
             id: z.ZodString;
             pergunta: z.ZodString;
             resposta: z.ZodString;
             visivel: z.ZodBoolean;
-        }, z.core.$strip>>>;
-    }, z.core.$strip>;
-}, z.core.$strip>;
+        }, z.core.$strict>>>;
+    }, z.core.$strict>;
+}, z.core.$strict>;
 export type BlockName = z.infer<typeof blockNameSchema>;
 export type ScheduleType = z.infer<typeof scheduleTypeSchema>;
 export type ScheduleMeta = z.infer<typeof scheduleMetaSchema>;
@@ -508,7 +473,6 @@ export type ScheduleContent = z.infer<typeof scheduleContentSchema>;
 export type Price = z.infer<typeof priceSchema>;
 export type Notice = z.infer<typeof noticeSchema>;
 export type Service = z.infer<typeof serviceSchema>;
-export type TeamMember = z.infer<typeof teamMemberSchema>;
 export type Contacts = z.infer<typeof contactsSchema>;
 export type FaqItem = z.infer<typeof faqItemSchema>;
 export type MovaFile = z.infer<typeof movaFileSchema>;

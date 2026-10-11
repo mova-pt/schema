@@ -15,7 +15,7 @@ Inclui:
 ## Instalar
 
 ```bash
-npm install github:mova-pt/schema#v1.0.0
+npm install github:mova-pt/schema#v1.0.1
 ```
 
 O repositório é privado: a máquina que instala precisa de acesso ao GitHub da organização.
@@ -97,22 +97,25 @@ const file = movaFileSchema.safeParse(await response.json()); // importação de
 const precos = blockSchemas.precos.parse(data); // resposta de /api/public/{tenant}/precos
 ```
 
-O painel deve servir o ficheiro `schema/mova.v1.json` em `https://app.movadigital.pt/schema/mova.v1.json`, que é o endereço que os `mova.json` indicam em `"$schema"`.
+O ficheiro `schema/mova.v1.json` é o mesmo formato em JSON Schema, para documentação e para validar fora do TypeScript.
 
 ## Regras do formato
 
+- Blocos da versão 1: `horarios`, `precos`, `avisos`, `servicos`, `contactos` e `faq`.
 - `"blocos"` lista só os blocos com secção visível no site, e cada um tem de ter conteúdo.
+- Os objetos são estritos: um campo que não esteja no formato é um erro, tal como no painel.
 - Cada horário tem `id`, `nome` e `tipo`: `opening` (funcionamento), `availability` (atendimento ou marcação) ou `classes` (aulas). O conteúdo de `opening` e `availability` tem `dias` e `excecoes`; o de `classes` tem `aulas` e `excecoes`.
 - Dias: 1 = segunda ... 7 = domingo. Horas em `"HH:MM"`, hora local de Lisboa. Datas em `"AAAA-MM-DD"`.
 - Os `id` são slugs em minúsculas, sem acentos, e não se repetem na mesma lista.
 - O fim é sempre depois do início e os intervalos do mesmo dia não se sobrepõem.
-- Endereços de redes sociais só `http` ou `https`. Fotos só caminhos locais (`/images/...`) ou `https`.
+- Endereços de redes sociais só `https`. Fotos só caminhos de imagens do próprio site (`/images/pilates.webp`).
+- Tudo tem limite de tamanho (por exemplo, 60 preços, 80 serviços, 300 aulas por horário). Os limites são os mesmos do painel.
 
 ## Evolução do formato
 
-- **Sem mudar a versão:** acrescentar campos opcionais ou blocos novos.
-- **Com versão nova (`"versao": 2`):** renomear, remover ou tornar obrigatório um campo. O painel aceita as duas versões durante a transição.
-- Campos desconhecidos são ignorados, não rejeitados.
+- Como os objetos são estritos, qualquer campo ou bloco novo tem de chegar primeiro ao painel e só depois aos sites. A ordem é: nova versão deste pacote, atualizar o painel, atualizar os sites.
+- **Sem mudar `"versao"`:** acrescentar campos opcionais ou blocos novos.
+- **Com `"versao": 2`:** renomear, remover ou tornar obrigatório um campo. O painel aceita as duas versões durante a transição.
 
 ## Desenvolvimento
 

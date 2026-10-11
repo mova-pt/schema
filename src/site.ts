@@ -9,9 +9,7 @@ import {
   type ScheduleContent,
 } from "./schemas.js";
 
-export const MOVA_SCHEMA_URL = "https://app.movadigital.pt/schema/mova.v1.json";
-
-export type SiteInput = Omit<MovaFileInput, "versao" | "$schema">;
+export type SiteInput = Omit<MovaFileInput, "versao">;
 
 // Valida o conteúdo de content/site.ts. Lança um erro se o formato estiver errado.
 export function defineSite(input: SiteInput): MovaFile {
@@ -21,8 +19,7 @@ export function defineSite(input: SiteInput): MovaFile {
 // Texto do ficheiro public/mova.json, já validado.
 export function buildMovaJson(site: SiteInput | MovaFile): string {
   const file = movaFileSchema.parse({ ...site, versao: MOVA_VERSION });
-  const { $schema: _ignored, ...rest } = file;
-  return `${JSON.stringify({ $schema: MOVA_SCHEMA_URL, ...rest }, null, 2)}\n`;
+  return `${JSON.stringify(file, null, 2)}\n`;
 }
 
 // Retira os itens com "visivel": false, como faz a API pública.

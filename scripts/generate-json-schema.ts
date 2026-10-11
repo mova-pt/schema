@@ -1,10 +1,9 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { z } from "zod";
-import { MOVA_SCHEMA_URL, movaFileSchema } from "../src/index.js";
+import { movaFileSchema } from "../src/index.js";
 
 const jsonSchema = {
   ...z.toJSONSchema(movaFileSchema),
-  $id: MOVA_SCHEMA_URL,
   title: "mova.json (versão 1)",
 };
 

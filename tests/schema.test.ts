@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { MOVA_SCHEMA_URL, blockSchemas, movaFileSchema, BLOCK_NAMES } from "../src/index.js";
+import { blockSchemas, movaFileSchema, BLOCK_NAMES } from "../src/index.js";
 
 const read = (path: string) => JSON.parse(readFileSync(path, "utf8")) as unknown;
 const filesIn = (dir: string) => readdirSync(dir).filter((file) => file.endsWith(".json"));
@@ -38,11 +38,9 @@ describe("exemplos inválidos", () => {
 });
 
 describe("evolução do formato", () => {
-  it("ignora campos desconhecidos em vez de rejeitar o ficheiro", () => {
+  it("rejeita campos desconhecidos, tal como o painel", () => {
     const file = read("examples/valid/loja.json") as Record<string, unknown>;
-    const result = movaFileSchema.safeParse({ ...file, campoNovo: true });
-    expect(result.success).toBe(true);
-    expect(result.data).not.toHaveProperty("campoNovo");
+    expect(movaFileSchema.safeParse({ ...file, campoNovo: true }).success).toBe(false);
   });
 });
 
@@ -50,7 +48,6 @@ describe("JSON Schema publicado", () => {
   it("schema/mova.v1.json está atualizado (correr npm run build)", () => {
     const expected = {
       ...z.toJSONSchema(movaFileSchema),
-      $id: MOVA_SCHEMA_URL,
       title: "mova.json (versão 1)",
     };
     expect(read("schema/mova.v1.json")).toEqual(JSON.parse(JSON.stringify(expected)));
