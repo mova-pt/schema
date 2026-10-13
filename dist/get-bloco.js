@@ -3,7 +3,7 @@ import { filterVisible } from "./site.js";
 /**
  * Cria a função `getBloco` de um site.
  *
- * Os ficheiros (content/site.ts) são a base. Um bloco que o cliente editou no
+ * Os ficheiros (src/content/site.ts) são a base. Um bloco que o cliente editou no
  * painel vem do conteúdo gerado no build e passa à frente do ficheiro. Nos
  * horários, cada horário editado substitui o do mesmo `id` e os restantes
  * ficam como estão nos ficheiros.

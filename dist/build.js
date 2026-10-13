@@ -14,7 +14,7 @@ export async function writeMovaJson(site, outFile = "public/mova.json") {
     return writeJson(outFile, buildMovaJson(site));
 }
 /**
- * Escreve o conteúdo que o cliente editou no painel (content/panel.generated.json).
+ * Escreve o conteúdo que o cliente editou no painel (src/content/panel.generated.json).
  *
  * - Sem `MOVA_TENANT_ID` (demonstrações, pré-visualizações, desenvolvimento):
  *   escreve conteúdo vazio e o site usa só os ficheiros.
@@ -22,7 +22,7 @@ export async function writeMovaJson(site, outFile = "public/mova.json") {
  *   pára, para nunca se publicar o site sem as alterações do cliente.
  */
 export async function writePanelContent(options = {}) {
-    const { tenantId = process.env.MOVA_TENANT_ID, outFile = "content/panel.generated.json" } = options;
+    const { tenantId = process.env.MOVA_TENANT_ID, outFile = "src/content/panel.generated.json" } = options;
     const content = tenantId?.trim()
         ? await fetchPanelContent({ ...options, tenantId: tenantId.trim() })
         : emptyPanelContent();

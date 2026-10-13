@@ -16,9 +16,9 @@ Inclui:
 
 O site é **estático** e não faz pedidos ao painel quando alguém o visita.
 
-1. O conteúdo base está nos ficheiros do site (`content/site.ts`).
+1. O conteúdo base está nos ficheiros do site (`src/content/site.ts`).
 2. Quando o cliente edita um bloco no painel, o painel pede à Vercel uma nova construção do site.
-3. No build, o script `mova-sync` pergunta à API do painel que blocos o cliente editou e escreve-os em `content/panel.generated.json`.
+3. No build, o script `mova-sync` pergunta à API do painel que blocos o cliente editou e escreve-os em `src/content/panel.generated.json`.
 4. `getBloco` devolve o bloco do painel se o cliente o editou, e o dos ficheiros se não.
 
 Os ficheiros mandam até o cliente mexer. Depois do primeiro edit de um bloco, manda o painel.
@@ -33,7 +33,7 @@ Usar sempre o endereço `https` com o commit indicado nas instruções da pasta 
 
 ## Num site de cliente
 
-`content/site.ts`:
+`src/content/site.ts`:
 
 ```ts
 import { defineSite } from "@mova-pt/schema";
@@ -53,29 +53,29 @@ export const site = defineSite({
 });
 ```
 
-`lib/schemas.ts`:
+`src/lib/schemas.ts`:
 
 ```ts
 export * from "@mova-pt/schema";
 ```
 
-`lib/get-bloco.ts`:
+`src/lib/get-bloco.ts`:
 
 ```ts
 import { createGetBloco } from "@mova-pt/schema";
 import { site } from "@/content/site";
-import panel from "@/content/panel.generated.json";
+import panel from "@/src/content/panel.generated.json";
 
 export const getBloco = createGetBloco(site, { panel });
 ```
 
-`scripts/mova-sync.ts`:
+`scripts/mova-sync.mts` (ficheiro `.mts`, porque os sites não são módulos ES por omissão):
 
 ```ts
 import { writeMovaJson, writePanelContent } from "@mova-pt/schema/build";
-import { site } from "../content/site";
+import { site } from "../src/content/site";
 
-await writePanelContent(); // content/panel.generated.json
+await writePanelContent(); // src/content/panel.generated.json (por omissão)
 await writeMovaJson(site); // public/mova.json
 ```
 
@@ -84,8 +84,8 @@ await writeMovaJson(site); // public/mova.json
 ```json
 {
   "scripts": {
-    "predev": "tsx scripts/mova-sync.ts",
-    "prebuild": "tsx scripts/mova-sync.ts"
+    "predev": "tsx scripts/mova-sync.mts",
+    "prebuild": "tsx scripts/mova-sync.mts"
   }
 }
 ```
@@ -96,13 +96,13 @@ Num Server Component:
 const precos = getBloco("precos"); // null se o site não tiver o bloco
 ```
 
-`content/panel.generated.json` fica no repositório com o conteúdo vazio (`{"versao":1,"blocos":{}}`), para o site compilar sem correr o script. O build substitui-o.
+`src/content/panel.generated.json` fica no repositório com o conteúdo vazio (`{"versao":1,"blocos":{}}`), para o site compilar sem correr o script. O build substitui-o.
 
 ### O que acontece em cada caso
 
 | Situação | Resultado |
 |---|---|
-| Sem `MOVA_TENANT_ID` (demonstrações, pré-visualizações, desenvolvimento) | O site usa só `content/site.ts`. Nenhum pedido ao painel |
+| Sem `MOVA_TENANT_ID` (demonstrações, pré-visualizações, desenvolvimento) | O site usa só `src/content/site.ts`. Nenhum pedido ao painel |
 | Com `MOVA_TENANT_ID`, painel a responder | O site usa o que o cliente editou e, para o resto, os ficheiros |
 | Com `MOVA_TENANT_ID`, painel em baixo ou resposta inválida | **O build falha** e a versão anterior continua no ar. Nunca se publica o site sem as alterações do cliente |
 | Bloco que o cliente nunca editou | A API responde 404 e o site usa os ficheiros |

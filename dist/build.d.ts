@@ -9,7 +9,7 @@ export type WritePanelOptions = Partial<Omit<FetchPanelOptions, "tenantId">> & {
     outFile?: string;
 };
 /**
- * Escreve o conteúdo que o cliente editou no painel (content/panel.generated.json).
+ * Escreve o conteúdo que o cliente editou no painel (src/content/panel.generated.json).
  *
  * - Sem `MOVA_TENANT_ID` (demonstrações, pré-visualizações, desenvolvimento):
  *   escreve conteúdo vazio e o site usa só os ficheiros.
