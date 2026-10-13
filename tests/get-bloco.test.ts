@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  MOVA_REVALIDATE_SECONDS,
   buildMovaJson,
   createGetBloco,
   defineSite,
@@ -11,77 +10,67 @@ import {
 
 const input = JSON.parse(readFileSync("examples/valid/ginasio.json", "utf8")) as SiteInput;
 const site = defineSite(input);
+const empty = { versao: 1, blocos: {} };
 
-const jsonResponse = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
-
-afterEach(() => {
-  vi.unstubAllEnvs();
-});
-
-describe("getBloco sem MOVA_TENANT_ID", () => {
-  it("usa o conteúdo do site e não faz pedidos", async () => {
-    const fetchMock = vi.fn();
-    const getBloco = createGetBloco(site, { fetch: fetchMock });
-    expect(await getBloco("precos")).toEqual(site.conteudo.precos);
-    expect(fetchMock).not.toHaveBeenCalled();
+describe("getBloco sem conteúdo do painel", () => {
+  it("usa o conteúdo dos ficheiros", () => {
+    expect(createGetBloco(site)("precos")).toEqual(site.conteudo.precos);
+    expect(createGetBloco(site, { panel: empty })("precos")).toEqual(site.conteudo.precos);
   });
 
-  it("retira os itens com visivel = false", async () => {
-    const getBloco = createGetBloco(site, { fetch: vi.fn() });
-    const schedules = await getBloco("horarios");
+  it("retira os itens com visivel = false", () => {
+    const schedules = createGetBloco(site)("horarios");
     const classes = schedules?.aulas;
     expect(classes && "aulas" in classes ? classes.aulas.map((item) => item.id) : []).toEqual([
       "pilates-seg-1830",
     ]);
   });
 
-  it("devolve null para um bloco que o site não tem", async () => {
+  it("devolve null para um bloco que o site não tem", () => {
     const shop = defineSite(
       JSON.parse(readFileSync("examples/valid/loja.json", "utf8")) as SiteInput,
     );
-    expect(await createGetBloco(shop, { fetch: vi.fn() })("faq")).toBeNull();
+    expect(createGetBloco(shop)("faq")).toBeNull();
   });
 });
 
-describe("getBloco com MOVA_TENANT_ID", () => {
-  const TENANT = "3f2b8c1e-5d4a-4b6f-9a7c-0e1d2f3a4b5c";
-  const remotePrices = [{ id: "anual", nome: "Anual", preco: 400, visivel: true }];
+describe("getBloco com conteúdo do painel", () => {
+  const edited = [{ id: "anual", nome: "Anual", preco: 400, visivel: true }];
 
-  it("lê da API do painel com revalidate de 300 s", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(remotePrices));
-    const getBloco = createGetBloco(site, { tenantId: TENANT, fetch: fetchMock });
-
-    expect(await getBloco("precos")).toEqual(remotePrices);
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit & { next?: unknown }];
-    expect(url).toBe(`https://app.movadigital.pt/api/public/${TENANT}/precos`);
-    expect(init.next).toEqual({ revalidate: MOVA_REVALIDATE_SECONDS });
-    expect(init.signal).toBeInstanceOf(AbortSignal);
+  it("o bloco editado passa à frente do ficheiro", () => {
+    const getBloco = createGetBloco(site, { panel: { versao: 1, blocos: { precos: edited } } });
+    expect(getBloco("precos")).toEqual(edited);
+    // Os restantes continuam a vir dos ficheiros.
+    expect(getBloco("faq")).toEqual(site.conteudo.faq);
   });
 
-  it("lê o tenant da variável de ambiente", async () => {
-    vi.stubEnv("MOVA_TENANT_ID", "tenant_env");
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(remotePrices));
-    await createGetBloco(site, { fetch: fetchMock })("precos");
-    expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/public/tenant_env/precos");
+  it("nos horários, o editado substitui o do mesmo id e os outros ficam", () => {
+    const editedReception = {
+      dias: [{ dia: 1, intervalos: [{ inicio: "09:00", fim: "13:00" }] }],
+      excecoes: [],
+    };
+    const getBloco = createGetBloco(site, {
+      panel: { versao: 1, blocos: { horarios: { rececao: editedReception } } },
+    });
+    const schedules = getBloco("horarios");
+    expect(schedules?.rececao).toEqual(editedReception);
+    expect(schedules?.aulas).toBeDefined();
   });
 
-  it.each([
-    ["resposta 404", () => Promise.resolve(jsonResponse({ erro: "x" }, 404))],
-    ["resposta 500", () => Promise.resolve(jsonResponse({}, 500))],
-    ["dados que não passam no Zod", () => Promise.resolve(jsonResponse([{ id: "A B" }]))],
-    ["corpo que não é JSON", () => Promise.resolve(new Response("<html>", { status: 200 }))],
-    ["falha de rede ou timeout", () => Promise.reject(new Error("timeout"))],
-  ])("usa o conteúdo do site com %s", async (_name, respond) => {
-    const getBloco = createGetBloco(site, { tenantId: TENANT, fetch: vi.fn(respond) });
-    expect(await getBloco("precos")).toEqual(site.conteudo.precos);
+  it("não devolve um bloco que o site não mostra", () => {
+    const shop = defineSite(
+      JSON.parse(readFileSync("examples/valid/loja.json", "utf8")) as SiteInput,
+    );
+    const getBloco = createGetBloco(shop, { panel: { versao: 1, blocos: { precos: edited } } });
+    expect(getBloco("precos")).toBeNull();
   });
 
-  it("não faz pedidos com um tenant de formato inválido", async () => {
-    const fetchMock = vi.fn();
-    const getBloco = createGetBloco(site, { tenantId: "../admin", fetch: fetchMock });
-    expect(await getBloco("precos")).toEqual(site.conteudo.precos);
-    expect(fetchMock).not.toHaveBeenCalled();
+  it("recusa conteúdo do painel inválido ou com versão desconhecida", () => {
+    expect(() =>
+      createGetBloco(site, { panel: { versao: 1, blocos: { precos: [{ id: "A B" }] } } }),
+    ).toThrow();
+    expect(() => createGetBloco(site, { panel: { versao: 2, blocos: {} } })).toThrow();
+    expect(() => createGetBloco(site, { panel: { versao: 1, blocos: { galeria: [] } } })).toThrow();
   });
 });
 

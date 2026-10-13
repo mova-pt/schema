@@ -1,6 +1,6 @@
 {
   "name": "@mova-pt/schema",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Formato mova.json: esquemas Zod, tipos, getBloco e gerador para os sites e o painel da Mova.",
   "private": true,
   "license": "UNLICENSED",
