@@ -64,7 +64,7 @@ export * from "@mova-pt/schema";
 ```ts
 import { createGetBloco } from "@mova-pt/schema";
 import { site } from "@/content/site";
-import panel from "@/src/content/panel.generated.json";
+import panel from "@/content/panel.generated.json";
 
 export const getBloco = createGetBloco(site, { panel });
 ```
